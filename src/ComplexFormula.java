@@ -27,49 +27,54 @@ public class ComplexFormula implements Formula{
     public Formula toCNF() {
 
         if(operator.equals("<->")){ //p iff q == (p -> q) and (q -> p)
-            return new ComplexFormula("^", new ComplexFormula("->", formula.get(1), formula.get(2)),
-                    new ComplexFormula("->", formula.get(2), formula.get(1))).toCNF();
+            return new ComplexFormula("^", new ComplexFormula("->", formula.get(0), formula.get(1)),
+                                           new ComplexFormula("->", formula.get(1), formula.get(0))).toCNF();
         }
         if(operator.equals("->")){ //p -> q == ¬p v q
-            return new ComplexFormula("v", new ComplexFormula("¬", formula.get(1)), formula.get(2)).toCNF();
+            display();
+            System.out.println(formula.size());
+            return new ComplexFormula("v", new ComplexFormula("¬", formula.get(0)),
+                                                    formula.get(1)).toCNF();
         }
         if(operator.equals("¬")){ //use De Morgan
-            Formula A = formula.get(1);
-            if(A.isAtomic()){
+            Formula A = formula.get(0);
+            if(A.isAtomic()){ //¬A
                 return this;
             }
-            if (A.getOp().equals("¬")){
-                return A.get(1).toCNF();
+            if (A.getOp().equals("¬")){ //¬¬a
+                return A.get(0).toCNF();
             }
-            if (A.getOp().equals("^")){
-                return new ComplexFormula("v", new ComplexFormula("¬", (Formula)A.get(1)),
-                new ComplexFormula("¬", (Formula)A.get(2))).toCNF();
+            if (A.getOp().equals("^")){ //¬(a^b) == ¬a v ¬b
+                return new ComplexFormula("v", new ComplexFormula("¬", (Formula)A.get(0)),
+                                               new ComplexFormula("¬", (Formula)A.get(1))).toCNF();
             }
-            if (A.getOp().equals("v")){
-                return new ComplexFormula("^", new ComplexFormula("¬", (Formula)A.get(1)),
-                new ComplexFormula("¬", (Formula)A.get(2))).toCNF();
+            if (A.getOp().equals("v")){ //¬(avb) == ¬a ^ ¬b
+                return new ComplexFormula("^", new ComplexFormula("¬", (Formula)A.get(0)),
+                                               new ComplexFormula("¬", (Formula)A.get(1))).toCNF();
             }
         }
-        if(operator.equals("v")){ //a v (b ^ c) == (a v b) ^ (a v c)
-            Formula A = formula.get(1);
-            Formula B = formula.get(2);
+        if(operator.equals("v")){ 
+            Formula A = formula.get(0);
+            Formula B = formula.get(1);
             if(A.isAtomic() && B.isAtomic()){ //a v b
                 return this;
             }else if(A.isAtomic()){ //a v (b ^ c) == (a v b) ^ (a v c)
-                return new ComplexFormula("^", new ComplexFormula("v", A, B.get(1).toCNF()), new ComplexFormula("v", A, B.get(2).toCNF())).toCNF();
+                return new ComplexFormula("^", new ComplexFormula("v", A, B.get(0).toCNF()), 
+                                               new ComplexFormula("v", A, B.get(1).toCNF())).toCNF();
             }else if(B.isAtomic()){ //(a ^b) v B == (a v B) ^ (b v B)
-                return new ComplexFormula("^", new ComplexFormula("v", A.get(1).toCNF(), B), new ComplexFormula("v", A.get(2).toCNF(), B)).toCNF();
+                return new ComplexFormula("^", new ComplexFormula("v", A.get(0).toCNF(), B),
+                                               new ComplexFormula("v", A.get(1).toCNF(), B)).toCNF();
             }else{ //(a ^b) v (c ^ d) == ((a v c) ^ (a v d)) ^ ((b v c) ^ (b v d))
                 return new ComplexFormula("^", 
-                new ComplexFormula("^", new ComplexFormula("v", A.get(1).toCNF(), B.get(1).toCNF()),
-                                        new ComplexFormula("v", A.get(1).toCNF(), B.get(2).toCNF())),
-                new ComplexFormula("^", new ComplexFormula("v", A.get(2).toCNF(), B.get(1).toCNF()),
-                                        new ComplexFormula("v", A.get(2).toCNF(), B.get(2).toCNF()))
+                new ComplexFormula("^", new ComplexFormula("v", A.get(0).toCNF(), B.get(0).toCNF()),
+                                        new ComplexFormula("v", A.get(0).toCNF(), B.get(1).toCNF())),
+                new ComplexFormula("^", new ComplexFormula("v", A.get(1).toCNF(), B.get(0).toCNF()),
+                                        new ComplexFormula("v", A.get(1).toCNF(), B.get(1).toCNF()))
                 ).toCNF();
             }
         }
         if(operator.equals("^")){
-            return new ComplexFormula("^", formula.get(1).toCNF(), formula.get(2).toCNF());
+            return new ComplexFormula("^", formula.get(0).toCNF(), formula.get(1).toCNF());
         }
 
         //if here there was an error
@@ -78,9 +83,10 @@ public class ComplexFormula implements Formula{
     }
 
     public void display(){
-        System.out.print("( ");
-        formula.get(1).display();
+        System.out.print("(");
+        formula.get(0).display();
         System.out.print(" " + operator + " ");
-        formula.get(2).display();
+        formula.get(1).display();
+        System.out.print(")");
     }
 }
