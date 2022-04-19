@@ -5,4 +5,6 @@ public class BeliefBase {
 
     private Set<Formula> BB = new HashSet<>();
 
+
+
 }
