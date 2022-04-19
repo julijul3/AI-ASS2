@@ -12,7 +12,7 @@ public class ComplexFormula implements Formula{
     }
 
     public boolean isAtomic(){
-        return false;
+        return operator.equals("¬") && formula.get(0).isAtomic();
     }
 
     public Formula get(int index){
@@ -31,8 +31,6 @@ public class ComplexFormula implements Formula{
                                            new ComplexFormula("->", formula.get(1), formula.get(0))).toCNF();
         }
         if(operator.equals("->")){ //p -> q == ¬p v q
-            display();
-            System.out.println(formula.size());
             return new ComplexFormula("v", new ComplexFormula("¬", formula.get(0)),
                                                     formula.get(1)).toCNF();
         }
@@ -53,11 +51,13 @@ public class ComplexFormula implements Formula{
                                                new ComplexFormula("¬", (Formula)A.get(1))).toCNF();
             }
         }
-        if(operator.equals("v")){ 
+        if(operator.equals("v")) {
             Formula A = formula.get(0);
             Formula B = formula.get(1);
-            if(A.isAtomic() && B.isAtomic()){ //a v b
+            if (A.isAtomic() && B.isAtomic()) { //a v b
                 return this;
+            }else if(A.getOp().equals("¬") || B.getOp().equals("¬")) {
+                return new ComplexFormula("v", A.toCNF(), B.toCNF());
             }else if(A.isAtomic()){ //a v (b ^ c) == (a v b) ^ (a v c)
                 return new ComplexFormula("^", new ComplexFormula("v", A, B.get(0).toCNF()), 
                                                new ComplexFormula("v", A, B.get(1).toCNF())).toCNF();
@@ -83,10 +83,15 @@ public class ComplexFormula implements Formula{
     }
 
     public void display(){
-        System.out.print("(");
-        formula.get(0).display();
-        System.out.print(" " + operator + " ");
-        formula.get(1).display();
-        System.out.print(")");
+        if(!operator.equals("¬")) {
+            System.out.print("(");
+            formula.get(0).display();
+            System.out.print(" " + operator + " ");
+            formula.get(1).display();
+            System.out.print(")");
+        }else{
+            System.out.print(operator);
+            formula.get(0).display();
+        }
     }
 }
