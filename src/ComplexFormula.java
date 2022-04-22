@@ -55,6 +55,9 @@ public class ComplexFormula implements Formula{
             Formula A = formula.get(0);
             Formula B = formula.get(1);
             if (A.isAtomic() && B.isAtomic()) { //a v b
+                if(A.equals(B)){ //A v A
+                    return new AtomicFormula(((AtomicFormula) A).getName()); //Factorise
+                }
                 return this;
             }else if(A.getOp().equals("¬") || B.getOp().equals("¬")) {
                 return new ComplexFormula("v", A.toCNF(), B.toCNF());
@@ -74,7 +77,14 @@ public class ComplexFormula implements Formula{
             }
         }
         if(operator.equals("^")){
-            return new ComplexFormula("^", formula.get(0).toCNF(), formula.get(1).toCNF());
+            Formula A = formula.get(0);
+            Formula B = formula.get(1);
+            if (A.isAtomic() && B.isAtomic()) { //a ^ b
+                if (A.equals(B)) {
+                    return new AtomicFormula(((AtomicFormula) A).getName()); //Factorise
+                }
+            }
+            return new ComplexFormula("^", A.toCNF(), B.toCNF());
         }
 
         //if here there was an error
