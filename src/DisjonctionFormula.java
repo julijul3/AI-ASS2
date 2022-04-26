@@ -1,3 +1,4 @@
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -5,12 +6,12 @@ public class DisjonctionFormula implements Formula {
 
     List<Formula> formulae = new LinkedList<>();
 
-    public DisjonctionFormula(Formula... literals){
-        for(Formula f: literals){
-            if (!f.isAtomic()){
+    public DisjonctionFormula(Formula... literals) {
+        for (Formula f : literals) {
+            if (!f.isAtomic()) {
                 throw new IllegalArgumentException("The formulae in a DisjunctionFormula must all be of form p or ¬p");
-            }else{
-                if(!formulae.contains(f)) {
+            } else {
+                if (!formulae.contains(f)) {
                     formulae.add(f);
                 }
             }
@@ -28,17 +29,17 @@ public class DisjonctionFormula implements Formula {
 
     @Override
     public boolean isAtomic() {
-        return formulae.size()==1 && formulae.get(0).isAtomic();
+        return formulae.size() == 1 && formulae.get(0).isAtomic();
     }
 
     @Override
     public void display() {
         System.out.print("(");
-        for(int i=0; i<formulae.size()-1; i++){
+        for (int i = 0; i < formulae.size() - 1; i++) {
             formulae.get(i).display();
             System.out.println(" v ");
         }
-        formulae.get(formulae.size()-1).display();
+        formulae.get(formulae.size() - 1).display();
         System.out.println(")");
 
     }

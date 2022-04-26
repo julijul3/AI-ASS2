@@ -13,7 +13,7 @@ public class BeliefBase {
         BB.addAll(Arrays.asList(formulae));
     }
 
-    public void addFormula(Formula f){
+    public void addFormula(Formula f) {
         BB.add(f);
     }
 
@@ -111,14 +111,35 @@ public class BeliefBase {
     }
 
     public void leviId(Formula f) { // B ∗ φ := (B ÷ ¬φ) + φ
-        BB.remove(new ComplexFormula("¬", f));
+        BeliefBase contraBB = this.findContradictions(f);
+        contraBB.BB.forEach(contra -> {
+            BB.remove(contra);
+        });
         BB.add(f);
     }
 
-    public void display(){
+    private BeliefBase findContradictions(Formula f) {
+        BeliefBase contra = new BeliefBase();
+        BeliefBase check = new BeliefBase(f);
+
+        BB.forEach(formula -> {
+            check.addFormula(formula);
+            if (!check.checkEntailment(f)) {
+                contra.addFormula(formula);
+            }
+            check.removeFromula(formula);
+        });
+        return contra;
+    }
+
+    public void display() {
         for (Formula f : BB) {
             f.display();
             System.out.println();
         }
+    }
+
+    public void removeFromula(Formula f) {
+        BB.remove(f);
     }
 }
