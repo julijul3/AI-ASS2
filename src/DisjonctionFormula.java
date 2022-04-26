@@ -1,6 +1,7 @@
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class DisjonctionFormula implements Formula {
 
@@ -51,5 +52,13 @@ public class DisjonctionFormula implements Formula {
     @Override
     public String getOp() {
         return "v";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DisjonctionFormula that = (DisjonctionFormula) o;
+        return Objects.equals(formulae, that.formulae);
     }
 }
