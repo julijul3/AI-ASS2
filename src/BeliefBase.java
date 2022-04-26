@@ -127,7 +127,7 @@ public class BeliefBase {
             if (!check.checkEntailment(f)) {
                 contra.addFormula(formula);
             }
-            check.removeFromula(formula);
+            check.removeFormula(formula);
         });
         return contra;
     }
@@ -139,7 +139,7 @@ public class BeliefBase {
         }
     }
 
-    public void removeFromula(Formula f) {
+    public void removeFormula(Formula f) {
         BB.remove(f);
     }
 }

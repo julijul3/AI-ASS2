@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 
 public class Main {
@@ -18,53 +19,55 @@ public class Main {
         //check entailment (point two)
         boolean checkEntailment = BB.checkEntailment(phi);
         System.out.print("phi is ");
-        if(!checkEntailment) System.out.print("not");
+        if (!checkEntailment) {
+            System.out.print("not");
+        }
         System.out.println("entailed by the Belief Base");
 
         //contraction of the belief base
         System.out.println("adding phi to the Belief base: ");
         if (checkEntailment) {
             BB.addFormula(phi);
-        }else{
+        } else {
             BB.leviId(phi);
         }
     }
 
-    public static void fillBB(){
+    public static void fillBB() {
         System.out.println("Enter input for the Belief Base: one clause per line, empty line when done");
         String input;
-        do{
+        do {
             input = sc.nextLine();
             Formula f = createF(input);
             BB.addFormula(f);
-        }while(!input.isEmpty());
+        } while (!input.isEmpty());
     }
 
-    public static Formula createF(String input){
-        if(input.startsWith("(")){ //complex formula
+    public static Formula createF(String input) {
+        if (input.startsWith("(")) { //complex formula
             //find the operator (not a letter, not inside pair of parenthesis)
-            String op ="";
-            int indexOp=0;
+            String op = "";
+            int indexOp = 0;
             int numberOfP = 0;
-            for(int i=1; i<input.length(); i++){
+            for (int i = 1; i < input.length(); i++) {
                 char c = input.charAt(i);
-                if(c=='('){
+                if (c == '(') {
                     numberOfP++;
-                }else if(c ==')'){
+                } else if (c == ')') {
                     numberOfP--;
-                }else if(!(Character.isAlphabetic(c) && c!='v') && numberOfP==0 && c!= ' '){
+                } else if (!(Character.isAlphabetic(c) && c != 'v') && numberOfP == 0 && c != ' ') {
                     //this is our operator :)
-                    if(c == '<'){
+                    if (c == '<') {
                         op = "<->";
-                    }else if(c== '-'){
+                    } else if (c == '-') {
                         op = "->";
-                    }else{
+                    } else {
                         op = String.valueOf(c);
                     }
                     indexOp = i;
 
                     Formula f1 = createF(input.substring(1, indexOp - 1));
-                    Formula f2 = createF(input.substring(indexOp + op.length() + 1, input.length()-1));
+                    Formula f2 = createF(input.substring(indexOp + op.length() + 1, input.length() - 1));
                     // first formula is from after the parenthesis, until two before the index (because of space)
                     //the second is from one space after the end of op, until one before last (parenthesis)
                     return new ComplexFormula(op, f1, f2);
@@ -74,29 +77,29 @@ public class Main {
             System.out.println("Could not find operator: probably a wrong parenthesis somewhere");
             return null;
 
-        }else{ //either atomic either negation
+        } else { //either atomic either negation
 
-            if(input.startsWith("¬")){
+            if (input.startsWith("¬")) {
                 return new ComplexFormula("¬", new AtomicFormula(input.substring(1)));
-            }else{
+            } else {
                 return new AtomicFormula(input);
             }
         }
     }
 
-    public static Formula getInput(){
+    public static Formula getInput() {
         String input = sc.nextLine();
         return createF(input);
     }
 
-    public static void testCNF(){
+    public static void testCNF() {
 
         System.out.println("tests CNF");
 
         AtomicFormula p = new AtomicFormula("p");
         AtomicFormula q = new AtomicFormula("q");
         // p<->q == ((!p) v q) & ((!q) v p)
-        Formula toConvert = new ComplexFormula("<->",p,q);
+        Formula toConvert = new ComplexFormula("<->", p, q);
         Formula cnf = toConvert.toCNF();
         cnf.display();
 
@@ -114,7 +117,7 @@ public class Main {
         anona.toCNF().display();
     }
 
-    public static void testResolution(){
+    public static void testResolution() {
         System.out.println("Test resolution");
         AtomicFormula reussi = new AtomicFormula("reussi");
         AtomicFormula prepared = new AtomicFormula("prepared");
@@ -129,7 +132,7 @@ public class Main {
         System.out.println(BB.checkEntailment(phi));
     }
 
-    public static void testAGMPostulates(){
+    public static void testAGMPostulates() {
         System.out.println("testing AGM Postulates");
 
         //test for success
@@ -143,8 +146,5 @@ public class Main {
         BB.leviId(new ComplexFormula("¬", q));
         System.out.println("Should print the following belief base: p, ¬q");
         BB.display();
-
     }
-    
-
 }

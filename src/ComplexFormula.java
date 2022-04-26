@@ -1,7 +1,6 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class ComplexFormula implements Formula {
 
@@ -113,10 +112,14 @@ public class ComplexFormula implements Formula {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ComplexFormula that = (ComplexFormula) o;
-        return operator.equals(that.operator) &&
-                formula.equals(that.formula);
+        return operator.equals(that.operator)
+                && formula.equals(that.formula);
     }
 }

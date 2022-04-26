@@ -1,10 +1,11 @@
+
 import java.util.Objects;
 
-public class AtomicFormula implements Formula{
+public class AtomicFormula implements Formula {
 
-    private String name;
+    private final String name;
 
-    public AtomicFormula(String name){
+    public AtomicFormula(String name) {
         this.name = name;
     }
 
@@ -13,31 +14,39 @@ public class AtomicFormula implements Formula{
         return this;
     }
 
-    public boolean isAtomic(){
+    @Override
+    public boolean isAtomic() {
         return true;
     }
 
-    public void display(){
+    @Override
+    public void display() {
         System.out.print(name);
     }
 
-    public Formula get(int index){
+    @Override
+    public Formula get(int index) {
         //this is never called
         return this;
     }
 
-    public String getOp(){
+    @Override
+    public String getOp() {
         return "";
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AtomicFormula that = (AtomicFormula) o;
         return name.equals(that.name);
     }
