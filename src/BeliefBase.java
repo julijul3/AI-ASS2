@@ -45,7 +45,7 @@ public class BeliefBase {
                         if (emptyClause) {
                             return true;
                         }
-                        if(!hasChanged){
+                        if (!hasChanged) {
                             hasChanged = !set.equals(toCompare);
                         }
                     }
@@ -93,7 +93,7 @@ public class BeliefBase {
                         newA.getList().addAll(b.getList());
                         newA.getList().remove(f1);
                         newA.getList().remove(f2);
-                        
+
                         set.add(newA);
                     }
                     return false;
@@ -104,10 +104,28 @@ public class BeliefBase {
         return false;
     }
 
+    private boolean isContradiction(Formula a, Formula b) {
+        List<Formula> list = new LinkedList<>();
+        toDisjonctiveF(a, list);
+        DisjonctionFormula df1 = new DisjonctionFormula(list.toArray(new Formula[0]));
+
+        list = new LinkedList<>();
+        toDisjonctiveF(b, list);
+        DisjonctionFormula df2 = new DisjonctionFormula(list.toArray(new Formula[0]));
+
+        Set<DisjonctionFormula> set = new HashSet<>();
+        BB.forEach(f -> {
+            addClauses(f.toCNF(), set);
+        });
+
+        return resolve(df1, df2, set);
+
+    }
+
     public void leviId(Formula f) { // B ∗ φ := (B ÷ ¬φ) + φ
         BeliefBase contraBB = this.findContradictions(f);
+        System.out.println(contraBB.BB.size());
         contraBB.display();
-
 
         contraBB.BB.forEach(contra -> {
             BB.remove(contra);
@@ -117,14 +135,10 @@ public class BeliefBase {
 
     private BeliefBase findContradictions(Formula f) {
         BeliefBase contra = new BeliefBase();
-        BeliefBase check = new BeliefBase(f);
-
         BB.forEach(formula -> {
-            check.addFormula(formula);
-            if (!check.checkEntailment(f)) {
+            if (isContradiction(formula, f)) {
                 contra.addFormula(formula);
             }
-            check.removeFormula(formula);
         });
         return contra;
     }
@@ -140,7 +154,7 @@ public class BeliefBase {
         return BB.remove(f);
     }
 
-    public void empty(){
+    public void empty() {
         BB.clear();
     }
 }
