@@ -47,8 +47,8 @@ public class Main {
     public static Formula createF(String input) {
         if (input.startsWith("(")) { //complex formula
             //find the operator (not a letter, not inside pair of parenthesis)
-            String op = "";
-            int indexOp = 0;
+            String op;
+            int indexOp;
             int numberOfP = 0;
             for (int i = 1; i < input.length(); i++) {
                 char c = input.charAt(i);
@@ -58,13 +58,14 @@ public class Main {
                     numberOfP--;
                 } else if (!(Character.isAlphabetic(c) && c != 'v') && numberOfP == 0 && c != ' ') {
                     //this is our operator :)
-                    if (c == '<') {
-                        op = "<->";
-                    } else if (c == '-') {
-                        op = "->";
-                    } else {
-                        op = String.valueOf(c);
-                    }
+                    op = switch (c) {
+                        case '<' ->
+                            "<->";
+                        case '-' ->
+                            "->";
+                        default ->
+                            String.valueOf(c);
+                    };
                     indexOp = i;
 
                     Formula f1 = createF(input.substring(1, indexOp - 1));
