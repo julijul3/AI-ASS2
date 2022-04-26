@@ -1,3 +1,5 @@
+
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -5,22 +7,23 @@ import java.util.Set;
 
 public class BeliefBase {
 
-    private Set<Formula> BB = new HashSet<>();
+    private final Set<Formula> BB = new HashSet<>();
 
-    public BeliefBase(Formula... formulae){
-        for(Formula f:formulae){
-            BB.add(f);
-        }
+    public BeliefBase(Formula... formulae) {
+        BB.addAll(Arrays.asList(formulae));
     }
 
-    public boolean checkEntailment(Formula phi){
+    public void addFormula(Formula f){
+        BB.add(f);
+    }
+
+    public boolean checkEntailment(Formula phi) {
 
         // we want a set of formula containing the clauses of BB ^ ¬phi in their CNF form
-
         Set<DisjonctionFormula> set = new HashSet<>();
-        for(Formula f: BB){
+        BB.forEach(f -> {
             addClauses(f.toCNF(), set);
-        }
+        });
 
         Formula nonPhi = new ComplexFormula("¬", phi);
         addClauses(nonPhi.toCNF(), set);
@@ -39,25 +42,29 @@ public class BeliefBase {
                 for (DisjonctionFormula b : toIterate) {
                     if (a != b) {
                         emptyClause = !resolve(a, b, set);
-                        if(emptyClause) return true;
+                        if (emptyClause) {
+                            return true;
+                        }
                         hasChanged = set.equals(toCompare);
-                        if(hasChanged) break;
+                        if (hasChanged) {
+                            break;
+                        }
                     }
                 }
                 if (hasChanged) {
                     break;
                 }
             }
-        }while(hasChanged);
+        } while (hasChanged);
 
         return false;
     }
 
-    private void addClauses(Formula f, Set<DisjonctionFormula> set){
-        if(f.getOp().equals("^")){
+    private void addClauses(Formula f, Set<DisjonctionFormula> set) {
+        if (f.getOp().equals("^")) {
             addClauses(f.get(0), set);
             addClauses(f.get(1), set);
-        }else{
+        } else {
             //extract all formulas here
             List<Formula> list = new LinkedList<>();
             toDisjonctiveF(f, list);
@@ -66,25 +73,25 @@ public class BeliefBase {
         }
     }
 
-    private void toDisjonctiveF(Formula f, List<Formula> list){
-        if(f.isAtomic()){
+    private void toDisjonctiveF(Formula f, List<Formula> list) {
+        if (f.isAtomic()) {
             list.add(f);
-        }else{
+        } else {
             toDisjonctiveF(f.get(0), list);
             toDisjonctiveF(f.get(1), list);
         }
     }
 
-    private boolean resolve(DisjonctionFormula a, DisjonctionFormula b, Set<DisjonctionFormula> set){
-        for(Formula f1: a.getList()){
-            for(Formula f2: b.getList()){
-                if((f1.getOp().equals("¬") && f1.get(0).equals(b)) ||
-                        f2.getOp().equals("¬") && f2.get(0).equals(a)){ // f1 and f2 are complementary
+    private boolean resolve(DisjonctionFormula a, DisjonctionFormula b, Set<DisjonctionFormula> set) {
+        for (Formula f1 : a.getList()) {
+            for (Formula f2 : b.getList()) {
+                if ((f1.getOp().equals("¬") && f1.get(0).equals(b))
+                        || f2.getOp().equals("¬") && f2.get(0).equals(a)) { // f1 and f2 are complementary
 
                     // if f1 and f2 were the only literals here -> it yields the emptyClause!
-                    if(a.isAtomic() && b.isAtomic()){
+                    if (a.isAtomic() && b.isAtomic()) {
                         return true;
-                    }else{
+                    } else {
                         //we create a new Formula with all the other literals and remove f1 f2
                         DisjonctionFormula newA = new DisjonctionFormula(a.getList().toArray(new Formula[0]));
                         newA.getList().addAll(b.getList());
@@ -101,5 +108,17 @@ public class BeliefBase {
         }
         //no complementary literals in these two formula
         return false;
+    }
+
+    public void leviId(Formula f) { // B ∗ φ := (B ÷ ¬φ) + φ
+        BB.remove(new ComplexFormula("¬", f));
+        BB.add(f);
+    }
+
+    public void display(){
+        for (Formula f : BB) {
+            f.display();
+            System.out.println();
+        }
     }
 }
