@@ -10,7 +10,7 @@ p
 
 i.e: 
 - if theres an operator, always have space around it and parenthesis around the operands.
-- a litteral is just a string, DO NOT surround it with parenthesis
+- a litteral is just a string, DO NOT surround it with parenthesis (and it cannot contain v, as it is here an operator)
 - if theres a negation, do not insert space between the negation and the literal
 
 The available operators are:
