@@ -41,18 +41,14 @@ public class BeliefBase {
             for (DisjonctionFormula a : toIterate) {
                 for (DisjonctionFormula b : toIterate) {
                     if (a != b) {
-                        emptyClause = !resolve(a, b, set);
+                        emptyClause = resolve(a, b, set);
                         if (emptyClause) {
                             return true;
                         }
-                        hasChanged = set.equals(toCompare);
-                        if (hasChanged) {
-                            break;
+                        if(!hasChanged){
+                            hasChanged = !set.equals(toCompare);
                         }
                     }
-                }
-                if (hasChanged) {
-                    break;
                 }
             }
         } while (hasChanged);
@@ -97,9 +93,7 @@ public class BeliefBase {
                         newA.getList().addAll(b.getList());
                         newA.getList().remove(f1);
                         newA.getList().remove(f2);
-
-                        set.remove(a);
-                        set.remove(b);
+                        
                         set.add(newA);
                     }
                     return false;
@@ -112,6 +106,9 @@ public class BeliefBase {
 
     public void leviId(Formula f) { // B ∗ φ := (B ÷ ¬φ) + φ
         BeliefBase contraBB = this.findContradictions(f);
+        contraBB.display();
+
+
         contraBB.BB.forEach(contra -> {
             BB.remove(contra);
         });
@@ -139,7 +136,11 @@ public class BeliefBase {
         }
     }
 
-    public void removeFormula(Formula f) {
-        BB.remove(f);
+    public boolean removeFormula(Formula f) {
+        return BB.remove(f);
+    }
+
+    public void empty(){
+        BB.clear();
     }
 }

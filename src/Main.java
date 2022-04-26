@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //testResolution();
         testAGMPostulates();
         //fill the belief base with input from the console
         fillBB();
@@ -143,6 +144,9 @@ public class Main {
         BB.addFormula(p);
         BB.addFormula(new ComplexFormula("^", p, q));
 
+        BB.display();
+
+        //System.out.println(BB.checkEntailment(new ComplexFormula("¬", q)));
         BB.leviId(new ComplexFormula("¬", q));
         System.out.println("Should print the following belief base: p, ¬q");
         BB.display();
