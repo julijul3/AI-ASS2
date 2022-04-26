@@ -41,7 +41,6 @@ public class DisjonctionFormula implements Formula {
         }
         formulae.get(formulae.size() - 1).display();
         System.out.println(")");
-
     }
 
     @Override

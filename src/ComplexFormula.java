@@ -1,6 +1,7 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ComplexFormula implements Formula {
 
@@ -108,5 +109,14 @@ public class ComplexFormula implements Formula {
             System.out.print(operator);
             formula.get(0).display();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ComplexFormula that = (ComplexFormula) o;
+        return operator.equals(that.operator) &&
+                formula.equals(that.formula);
     }
 }
