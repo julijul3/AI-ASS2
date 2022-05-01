@@ -122,4 +122,9 @@ public class ComplexFormula implements Formula {
         return operator.equals(that.operator)
                 && formula.equals(that.formula);
     }
+
+    @Override
+    public String toString() {
+        return formula.get(0).toString() + " " + this.operator + " " + formula.get(1).toString();
+    }
 }

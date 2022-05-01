@@ -104,24 +104,6 @@ public class BeliefBase {
         return false;
     }
 
-    private boolean isContradiction(Formula a, Formula b) {
-        List<Formula> list = new LinkedList<>();
-        toDisjonctiveF(a, list);
-        DisjonctionFormula df1 = new DisjonctionFormula(list.toArray(new Formula[0]));
-
-        list = new LinkedList<>();
-        toDisjonctiveF(b, list);
-        DisjonctionFormula df2 = new DisjonctionFormula(list.toArray(new Formula[0]));
-
-        Set<DisjonctionFormula> set = new HashSet<>();
-        BB.forEach(f -> {
-            addClauses(f.toCNF(), set);
-        });
-
-        return resolve(df1, df2, set);
-
-    }
-
     public void leviId(Formula f) { // B ∗ φ := (B ÷ ¬φ) + φ
         BeliefBase contraBB = this.findContradictions(f);
         System.out.println(contraBB.BB.size());
@@ -135,8 +117,9 @@ public class BeliefBase {
 
     private BeliefBase findContradictions(Formula f) {
         BeliefBase contra = new BeliefBase();
+        TruthTable table = new TruthTable();
         BB.forEach(formula -> {
-            if (isContradiction(formula, f)) {
+            if (!table.consistency(formula, f)) {
                 contra.addFormula(formula);
             }
         });

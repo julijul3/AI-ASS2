@@ -8,6 +8,14 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // all this is for testing the truth table class
+//        AtomicFormula a = new AtomicFormula("a");
+//        ComplexFormula notA = new ComplexFormula("¬", a);
+//        AtomicFormula b = new AtomicFormula("b");
+//        AtomicFormula c = new AtomicFormula("c");
+//        ComplexFormula notAorB = new ComplexFormula("^", notA, b);
+//        boolean test = new TruthTable().consistency(notAorB, c);
+//        new TruthTable().make("p v q -> r");
         //testResolution();
         testAGMPostulates();
         //fill the belief base with input from the console

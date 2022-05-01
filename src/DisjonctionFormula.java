@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class DisjonctionFormula implements Formula {
 
-    List<Formula> formulae = new LinkedList<>();
+    private final List<Formula> formulae = new LinkedList<>();
 
     public DisjonctionFormula(Formula... literals) {
         for (Formula f : literals) {
@@ -17,6 +17,16 @@ public class DisjonctionFormula implements Formula {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        String result = "(";
+        for (int i = 0; i < formulae.size() - 1; i++) {
+            result += formulae.get(i).toString() + " v ";
+        }
+        result += formulae.get(formulae.size() - 1).toString() + ")";
+        return result;
     }
 
     public List<Formula> getList() {
